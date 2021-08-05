@@ -9,6 +9,8 @@ Windows Only.
 
 - [ ] Change Icons
 - [ ] Auto Detect Changes in Ports
+- [ ] Exit Confirmation
+- [ ] Minimize Window / Minimize to Tray Button
 - [ ] Ports Refresh Button
 - [ ] Interval functionality
 - [ ] Disable some buttons based on ports combo box value
