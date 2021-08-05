@@ -1,5 +1,5 @@
 # OhwMon
-Server program for OLed Hardware Monitor.
+Server program for OLed Hardware (PC) Monitor.
 
 Requires .Net Framework 4.8 
 
