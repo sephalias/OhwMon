@@ -16,9 +16,8 @@ namespace OhwMon
 {
     public partial class Main : Form
     {
-        static string data;
 
-        float temps;
+        float gpuTemp, cpuTemp;
 
         private SerialPort port = new SerialPort();
 
@@ -127,15 +126,26 @@ namespace OhwMon
                     {
                         if (sensor.SensorType == SensorType.Temperature)
                         {
-                            temps = sensor.Value.GetValueOrDefault();
+                            gpuTemp = sensor.Value.GetValueOrDefault();
                         }
                     }
+                }
+                if (hardware.HardwareType == HardwareType.CPU)
+                {
+                    hardware.Update();
+                    foreach (var sensor in hardware.Sensors)
+                        if (sensor.SensorType == SensorType.Temperature)
+                        {
+                            cpuTemp = sensor.Value.GetValueOrDefault();
+
+                        }
+
                 }
             }
 
             try
             {
-                port.Write(temps + "*" + "#");
+                port.Write(gpuTemp + "*" + cpuTemp + "#");
             } catch (Exception ex)
             {
                 timerMain.Stop();
@@ -213,7 +223,6 @@ namespace OhwMon
             labelPortStatus.Text = "Disconnected.";
             timerMain.Enabled = false;
             toolStripStatusLabel.Text = "Waiting for device...";
-            data = "";
         }
     }
 }
