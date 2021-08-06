@@ -8,11 +8,10 @@ Windows Only.
 ## Todo
 
 - [x] Change Icons
-- [ ] Auto Detect Changes in Ports
 - [ ] Exit Confirmation
-- [ ] Ports Refresh Button
-- [ ] Interval functionality
-- [ ] Disable some buttons based on ports combo box value
+- [x] Ports Refresh Button
+- [x] Interval functionality
+- [x] Disable some buttons based on ports combo box value
 - [ ] Work on Data Tab
 - [ ] Work on Logs Tab
 - [ ] Option to start on windows start up
