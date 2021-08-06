@@ -163,8 +163,13 @@ namespace OhwMon
             buttonSetInterval.Enabled = false;
 
             toolStripStatusLabel.Text = "Restarting...";
-            buttonClear.PerformClick();
-            buttonSetPort.PerformClick();
+            
+            if (labelPortStatus.Text == "Connected.")
+            {
+                buttonClear.PerformClick();
+                buttonSetPort.PerformClick();
+            }
+            
             toolStripStatusLabel.Text = "Interval Changed.";
         }
 
@@ -263,9 +268,9 @@ namespace OhwMon
                 MessageBox.Show(ex.Message);
                 labelPortStatus.Text = "Disconnected";
                 labelPortStatus.BackColor = Color.IndianRed;
-                toolStripStatusLabel.Text = "Device is not responding...";
                 buttonClear.Enabled = false;
                 buttonRefesh.PerformClick();
+                toolStripStatusLabel.Text = "Device disconnected or not responding...";
             }
         }
 
