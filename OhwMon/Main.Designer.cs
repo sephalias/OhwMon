@@ -42,12 +42,12 @@ namespace OhwMon
             this.comboBoxPorts = new System.Windows.Forms.ComboBox();
             this.buttonSet = new System.Windows.Forms.Button();
             this.buttonClear = new System.Windows.Forms.Button();
+            this.tabData = new System.Windows.Forms.TabPage();
             this.tabLogs = new System.Windows.Forms.TabPage();
             this.timerMain = new System.Windows.Forms.Timer(this.components);
             this.notifyIconMain = new System.Windows.Forms.NotifyIcon(this.components);
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.tabData = new System.Windows.Forms.TabPage();
             this.tabControl1.SuspendLayout();
             this.tabSettings.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -171,12 +171,21 @@ namespace OhwMon
             this.buttonClear.UseVisualStyleBackColor = true;
             this.buttonClear.Click += new System.EventHandler(this.Button_Clear);
             // 
+            // tabData
+            // 
+            this.tabData.Location = new System.Drawing.Point(4, 22);
+            this.tabData.Name = "tabData";
+            this.tabData.Size = new System.Drawing.Size(327, 175);
+            this.tabData.TabIndex = 2;
+            this.tabData.Text = "Data";
+            this.tabData.UseVisualStyleBackColor = true;
+            // 
             // tabLogs
             // 
             this.tabLogs.Location = new System.Drawing.Point(4, 22);
             this.tabLogs.Name = "tabLogs";
             this.tabLogs.Padding = new System.Windows.Forms.Padding(3);
-            this.tabLogs.Size = new System.Drawing.Size(316, 175);
+            this.tabLogs.Size = new System.Drawing.Size(327, 175);
             this.tabLogs.TabIndex = 1;
             this.tabLogs.Text = "Logs";
             this.tabLogs.UseVisualStyleBackColor = true;
@@ -209,15 +218,6 @@ namespace OhwMon
             this.toolStripStatusLabel.Name = "toolStripStatusLabel";
             this.toolStripStatusLabel.Size = new System.Drawing.Size(57, 17);
             this.toolStripStatusLabel.Text = "Waiting...";
-            // 
-            // tabData
-            // 
-            this.tabData.Location = new System.Drawing.Point(4, 22);
-            this.tabData.Name = "tabData";
-            this.tabData.Size = new System.Drawing.Size(316, 175);
-            this.tabData.TabIndex = 2;
-            this.tabData.Text = "Data";
-            this.tabData.UseVisualStyleBackColor = true;
             // 
             // Main
             // 

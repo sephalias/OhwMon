@@ -10,8 +10,7 @@ using System.Windows.Forms;
 
 using System.IO.Ports;
 using OpenHardwareMonitor.Hardware;
-
-
+using Microsoft.Win32;
 
 namespace OhwMon
 {
@@ -38,9 +37,60 @@ namespace OhwMon
         {
             InitializeComponent();
 
+            this.Icon = Properties.Resources.statistics;
+
+            string theme = GetSystemTheme();
+
+            if (theme == "Light")
+            {
+                notifyIconMain.Icon = Properties.Resources.outline_assessment_black_32;
+            }
+             else
+            {
+                notifyIconMain.Icon = Properties.Resources.outline_assessment_white_32;
+            }
+
             InitializeMonitor();
 
 
+        }
+
+        private string GetSystemTheme()
+        {
+            String registryPath = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
+            String theme;
+            try
+            {
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(registryPath))
+                {
+
+                    int themeRegistryValue = (int)Registry.GetValue(registryPath, "SystemUsesLightTheme", null);
+
+                    #pragma warning disable CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
+                    if (themeRegistryValue != null)
+                    #pragma warning restore CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
+                    {
+                        if (themeRegistryValue == 1)
+                        {
+                            theme = "Light";
+                        } else
+                        {
+                            theme = "Dark";
+                        }
+                    } else
+                    {
+                        theme = "None";
+                    }
+                }
+                
+
+            }
+             catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                theme = "None";
+            }
+            return theme;
         }
 
         private void InitializeMonitor()
