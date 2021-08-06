@@ -61,6 +61,20 @@ namespace OhwMon.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to App Icon
+        ///From: (FreeIcons) https://freeicons.io/office-and-workstation-icons-6/statistics-icon-19021
+        ///Author: (Free Preloaders) https://freeicons.io/profile/726
+        ///
+        ///Notification Icon
+        ///From: Google Icons.
+        /// </summary>
+        internal static string Credits {
+            get {
+                return ResourceManager.GetString("Credits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon outline_assessment_black_32 {
@@ -96,6 +110,16 @@ namespace OhwMon.Properties {
         internal static System.Drawing.Icon outline_assessment_white_64 {
             get {
                 object obj = ResourceManager.GetObject("outline_assessment_white_64", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon statistics {
+            get {
+                object obj = ResourceManager.GetObject("statistics", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
