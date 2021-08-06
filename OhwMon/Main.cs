@@ -213,6 +213,7 @@ namespace OhwMon
                     timerMain.Enabled = true;
                     toolStripStatusLabel.Text = "Sending Data...";
                     labelPortStatus.Text = "Connected.";
+                    labelPortStatus.BackColor = Color.Green;
                 }
             }
             catch (Exception ex)
@@ -234,6 +235,7 @@ namespace OhwMon
             }
 
             labelPortStatus.Text = "Disconnected.";
+            labelPortStatus.BackColor = Color.IndianRed;
             timerMain.Enabled = false;
             toolStripStatusLabel.Text = "Waiting for device...";
         }
