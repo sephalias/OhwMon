@@ -126,6 +126,9 @@ namespace OhwMon
                     currentPort = "";
                 }
                 port.BaudRate = 9600;
+
+                port.ReadTimeout = 500;
+                port.WriteTimeout = 500;
             } catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
