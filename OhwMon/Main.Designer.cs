@@ -163,6 +163,7 @@ namespace OhwMon
             this.comboBoxPorts.Name = "comboBoxPorts";
             this.comboBoxPorts.Size = new System.Drawing.Size(118, 21);
             this.comboBoxPorts.TabIndex = 1;
+            this.comboBoxPorts.SelectedIndexChanged += new System.EventHandler(this.ComboBoxPorts_SelectedIndexChanged);
             // 
             // buttonRefesh
             // 

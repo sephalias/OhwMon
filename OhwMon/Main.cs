@@ -19,6 +19,7 @@ namespace OhwMon
 
         float gpuTemp, cpuTemp;
 
+
         private SerialPort port = new SerialPort();
 
         Computer computer = new Computer()
@@ -50,6 +51,8 @@ namespace OhwMon
             }
 
             notifyIconMain.Visible = false;
+            buttonClear.Enabled = false;
+            buttonSet.Enabled = false;
 
             toolStripStatusLabel.Text = "Getting Ports...";
 
@@ -93,7 +96,8 @@ namespace OhwMon
             }
             return theme;
         }
-
+        
+        
         private void GetPorts()
         {
             try
@@ -116,6 +120,14 @@ namespace OhwMon
             } catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void ComboBoxPorts_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBoxPorts.SelectedIndex >= 0)
+            {
+                buttonSet.Enabled = true;
             }
         }
 
@@ -163,7 +175,10 @@ namespace OhwMon
             {
                 timerMain.Stop();
                 MessageBox.Show(ex.Message);
+                labelPortStatus.Text = "Disconnected";
+                labelPortStatus.BackColor = Color.IndianRed;
                 toolStripStatusLabel.Text = "Device is not responding...";
+                buttonClear.Enabled = false;
             }
         }
 
@@ -220,7 +235,13 @@ namespace OhwMon
             {
                 MessageBox.Show(ex.Message);
             }
+            if (labelPortStatus.Text == "Connected.")
+            {
+                buttonClear.Enabled = true;
+            }
         }
+
+        
 
         private void Button_Clear(object sender, EventArgs e)
         {
@@ -238,6 +259,7 @@ namespace OhwMon
             labelPortStatus.BackColor = Color.IndianRed;
             timerMain.Enabled = false;
             toolStripStatusLabel.Text = "Waiting for device...";
+            buttonClear.Enabled = false;
         }
     }
 }
