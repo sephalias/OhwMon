@@ -19,6 +19,8 @@ namespace OhwMon
 
         float gpuTemp, cpuTemp;
 
+        string currentPort;
+
 
         private SerialPort port = new SerialPort();
 
@@ -52,7 +54,9 @@ namespace OhwMon
 
             notifyIconMain.Visible = false;
             buttonClear.Enabled = false;
-            buttonSet.Enabled = false;
+            buttonSetPort.Enabled = false;
+
+            comboBoxInterval.SelectedItem = Properties.Settings.Default.Interval.ToString();
 
             toolStripStatusLabel.Text = "Getting Ports...";
 
@@ -115,6 +119,11 @@ namespace OhwMon
                 if (comboBoxPorts.Items.Count > 0)
                 {
                     comboBoxPorts.SelectedIndex = 0;
+                    currentPort = comboBoxPorts.SelectedItem.ToString();
+                } 
+                else
+                {
+                    currentPort = "";
                 }
                 port.BaudRate = 9600;
             } catch (Exception ex)
@@ -127,11 +136,39 @@ namespace OhwMon
         {
             if (comboBoxPorts.SelectedIndex >= 0)
             {
-                buttonSet.Enabled = true;
+                if (currentPort != comboBoxPorts.SelectedItem.ToString())
+                {
+                    buttonSetPort.Enabled = true;
+                }
+                
             }
         }
 
-        private void Button_Refresh(Object sender, EventArgs e)
+        private void ComboBoxInterval_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (Convert.ToInt32(comboBoxInterval.SelectedItem) != Properties.Settings.Default.Interval)
+            {
+                buttonSetInterval.Enabled = true;
+            } 
+            else
+            {
+                buttonSetInterval.Enabled = false;
+            }
+        }
+
+        private void Button_SetInterval(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.Interval = Convert.ToInt32(comboBoxInterval.SelectedItem);
+            Properties.Settings.Default.Save();
+            buttonSetInterval.Enabled = false;
+
+            toolStripStatusLabel.Text = "Restarting...";
+            buttonClear.PerformClick();
+            buttonSetPort.PerformClick();
+            toolStripStatusLabel.Text = "Interval Changed.";
+        }
+
+        private void Button_Refresh(object sender, EventArgs e)
         {
             toolStripStatusLabel.Text = "Refreshing Ports List...";
             comboBoxPorts.SelectedItem = null;
@@ -140,9 +177,56 @@ namespace OhwMon
             toolStripStatusLabel.Text = "Refreshing Ports List... Done.";
         }
 
+
+        private void Button_Set(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!port.IsOpen)
+                {
+                    port.PortName = comboBoxPorts.Text;
+                    port.Open();
+                    timerMain.Interval = Properties.Settings.Default.Interval;
+                    timerMain.Enabled = true;
+                    toolStripStatusLabel.Text = "Sending Data...";
+                    labelPortStatus.Text = "Connected.";
+                    labelPortStatus.BackColor = Color.Green;
+                    buttonSetPort.Enabled = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            if (labelPortStatus.Text == "Connected.")
+            {
+                buttonClear.Enabled = true;
+                currentPort = comboBoxPorts.SelectedItem.ToString();
+            }
+        }
+
+        private void Button_Clear(object sender, EventArgs e)
+        {
+            try
+            {
+                port.Write("DIS*");
+                port.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            labelPortStatus.Text = "Disconnected.";
+            labelPortStatus.BackColor = Color.IndianRed;
+            timerMain.Enabled = false;
+            toolStripStatusLabel.Text = "Waiting for device...";
+            buttonClear.Enabled = false;
+            buttonSetPort.Enabled = true;
+        }
+
         private void Status()
         {
-            foreach(var hardware in computer.Hardware)
+            foreach (var hardware in computer.Hardware)
             {
                 if (hardware.HardwareType == HardwareType.GpuNvidia)
                 {
@@ -171,7 +255,9 @@ namespace OhwMon
             try
             {
                 port.Write(gpuTemp + "*" + cpuTemp + "#");
-            } catch (Exception ex)
+                System.Console.WriteLine(gpuTemp + "*" + cpuTemp + "#");
+            }
+            catch (Exception ex)
             {
                 timerMain.Stop();
                 MessageBox.Show(ex.Message);
@@ -179,6 +265,7 @@ namespace OhwMon
                 labelPortStatus.BackColor = Color.IndianRed;
                 toolStripStatusLabel.Text = "Device is not responding...";
                 buttonClear.Enabled = false;
+                buttonRefesh.PerformClick();
             }
         }
 
@@ -201,7 +288,7 @@ namespace OhwMon
                 {
                     notifyIconMain.ShowBalloonTip(500, "OhwMon", toolStripStatusLabel.Text, ToolTipIcon.Info);
                     notifyIconMain.Text = toolStripStatusLabel.Text;
-                } 
+                }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
@@ -215,51 +302,6 @@ namespace OhwMon
             this.Show();
             this.WindowState = FormWindowState.Normal;
             notifyIconMain.Visible = false;
-        }
-
-        private void Button_Set(object sender, EventArgs e)
-        {
-            try
-            {
-                if (!port.IsOpen)
-                {
-                    port.PortName = comboBoxPorts.Text;
-                    port.Open();
-                    timerMain.Enabled = true;
-                    toolStripStatusLabel.Text = "Sending Data...";
-                    labelPortStatus.Text = "Connected.";
-                    labelPortStatus.BackColor = Color.Green;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            if (labelPortStatus.Text == "Connected.")
-            {
-                buttonClear.Enabled = true;
-            }
-        }
-
-        
-
-        private void Button_Clear(object sender, EventArgs e)
-        {
-            try
-            {
-                port.Write("DIS*");
-                port.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
-            labelPortStatus.Text = "Disconnected.";
-            labelPortStatus.BackColor = Color.IndianRed;
-            timerMain.Enabled = false;
-            toolStripStatusLabel.Text = "Waiting for device...";
-            buttonClear.Enabled = false;
         }
     }
 }

@@ -42,7 +42,7 @@ namespace OhwMon
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.comboBoxPorts = new System.Windows.Forms.ComboBox();
             this.buttonRefesh = new System.Windows.Forms.Button();
-            this.buttonSet = new System.Windows.Forms.Button();
+            this.buttonSetPort = new System.Windows.Forms.Button();
             this.tabData = new System.Windows.Forms.TabPage();
             this.tabLogs = new System.Windows.Forms.TabPage();
             this.timerMain = new System.Windows.Forms.Timer(this.components);
@@ -50,6 +50,7 @@ namespace OhwMon
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.button1 = new System.Windows.Forms.Button();
+            this.buttonSetInterval = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabSettings.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -82,6 +83,7 @@ namespace OhwMon
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.buttonSetInterval);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.buttonClear);
@@ -140,17 +142,26 @@ namespace OhwMon
             // comboBoxInterval
             // 
             this.comboBoxInterval.FormattingEnabled = true;
+            this.comboBoxInterval.Items.AddRange(new object[] {
+            "5000",
+            "4000",
+            "3000",
+            "2000",
+            "1000",
+            "500",
+            "100"});
             this.comboBoxInterval.Location = new System.Drawing.Point(10, 104);
             this.comboBoxInterval.Name = "comboBoxInterval";
             this.comboBoxInterval.Size = new System.Drawing.Size(121, 21);
             this.comboBoxInterval.TabIndex = 1;
+            this.comboBoxInterval.SelectedIndexChanged += new System.EventHandler(this.ComboBoxInterval_SelectedIndexChanged);
             // 
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.flowLayoutPanel1.Controls.Add(this.comboBoxPorts);
             this.flowLayoutPanel1.Controls.Add(this.buttonRefesh);
-            this.flowLayoutPanel1.Controls.Add(this.buttonSet);
+            this.flowLayoutPanel1.Controls.Add(this.buttonSetPort);
             this.flowLayoutPanel1.Location = new System.Drawing.Point(10, 28);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(297, 29);
@@ -175,15 +186,15 @@ namespace OhwMon
             this.buttonRefesh.UseVisualStyleBackColor = true;
             this.buttonRefesh.Click += new System.EventHandler(this.Button_Refresh);
             // 
-            // buttonSet
+            // buttonSetPort
             // 
-            this.buttonSet.Location = new System.Drawing.Point(208, 3);
-            this.buttonSet.Name = "buttonSet";
-            this.buttonSet.Size = new System.Drawing.Size(75, 23);
-            this.buttonSet.TabIndex = 3;
-            this.buttonSet.Text = "Set";
-            this.buttonSet.UseVisualStyleBackColor = true;
-            this.buttonSet.Click += new System.EventHandler(this.Button_Set);
+            this.buttonSetPort.Location = new System.Drawing.Point(208, 3);
+            this.buttonSetPort.Name = "buttonSetPort";
+            this.buttonSetPort.Size = new System.Drawing.Size(75, 23);
+            this.buttonSetPort.TabIndex = 3;
+            this.buttonSetPort.Text = "Set";
+            this.buttonSetPort.UseVisualStyleBackColor = true;
+            this.buttonSetPort.Click += new System.EventHandler(this.Button_Set);
             // 
             // tabData
             // 
@@ -243,6 +254,17 @@ namespace OhwMon
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.Button_Set);
             // 
+            // buttonSetInterval
+            // 
+            this.buttonSetInterval.Enabled = false;
+            this.buttonSetInterval.Location = new System.Drawing.Point(137, 102);
+            this.buttonSetInterval.Name = "buttonSetInterval";
+            this.buttonSetInterval.Size = new System.Drawing.Size(75, 23);
+            this.buttonSetInterval.TabIndex = 4;
+            this.buttonSetInterval.Text = "Set";
+            this.buttonSetInterval.UseVisualStyleBackColor = true;
+            this.buttonSetInterval.Click += new System.EventHandler(this.Button_SetInterval);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -287,8 +309,9 @@ namespace OhwMon
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
         private System.Windows.Forms.TabPage tabData;
-        private System.Windows.Forms.Button buttonSet;
+        private System.Windows.Forms.Button buttonSetPort;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonSetInterval;
     }
 }
 
