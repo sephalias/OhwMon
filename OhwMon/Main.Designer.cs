@@ -36,18 +36,20 @@ namespace OhwMon
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.buttonClear = new System.Windows.Forms.Button();
             this.labelPortStatus = new System.Windows.Forms.Label();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.comboBoxInterval = new System.Windows.Forms.ComboBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.comboBoxPorts = new System.Windows.Forms.ComboBox();
+            this.buttonRefesh = new System.Windows.Forms.Button();
             this.buttonSet = new System.Windows.Forms.Button();
-            this.buttonClear = new System.Windows.Forms.Button();
             this.tabData = new System.Windows.Forms.TabPage();
             this.tabLogs = new System.Windows.Forms.TabPage();
             this.timerMain = new System.Windows.Forms.Timer(this.components);
             this.notifyIconMain = new System.Windows.Forms.NotifyIcon(this.components);
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.button1 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabSettings.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -82,8 +84,9 @@ namespace OhwMon
             // 
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.buttonClear);
             this.panel1.Controls.Add(this.labelPortStatus);
-            this.panel1.Controls.Add(this.comboBox2);
+            this.panel1.Controls.Add(this.comboBoxInterval);
             this.panel1.Controls.Add(this.flowLayoutPanel1);
             this.panel1.Location = new System.Drawing.Point(8, 6);
             this.panel1.Name = "panel1";
@@ -114,29 +117,40 @@ namespace OhwMon
             this.label3.Text = "Interval";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // buttonClear
+            // 
+            this.buttonClear.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.buttonClear.Location = new System.Drawing.Point(137, 60);
+            this.buttonClear.Name = "buttonClear";
+            this.buttonClear.Size = new System.Drawing.Size(75, 23);
+            this.buttonClear.TabIndex = 3;
+            this.buttonClear.Text = "Clear";
+            this.buttonClear.UseVisualStyleBackColor = true;
+            this.buttonClear.Click += new System.EventHandler(this.Button_Clear);
+            // 
             // labelPortStatus
             // 
             this.labelPortStatus.AutoSize = true;
-            this.labelPortStatus.Location = new System.Drawing.Point(35, 60);
+            this.labelPortStatus.Location = new System.Drawing.Point(10, 65);
             this.labelPortStatus.Name = "labelPortStatus";
             this.labelPortStatus.Size = new System.Drawing.Size(52, 13);
             this.labelPortStatus.TabIndex = 1;
             this.labelPortStatus.Text = "Waiting...";
             // 
-            // comboBox2
+            // comboBoxInterval
             // 
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(10, 104);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(121, 21);
-            this.comboBox2.TabIndex = 1;
+            this.comboBoxInterval.FormattingEnabled = true;
+            this.comboBoxInterval.Location = new System.Drawing.Point(10, 104);
+            this.comboBoxInterval.Name = "comboBoxInterval";
+            this.comboBoxInterval.Size = new System.Drawing.Size(121, 21);
+            this.comboBoxInterval.TabIndex = 1;
             // 
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.flowLayoutPanel1.Controls.Add(this.comboBoxPorts);
+            this.flowLayoutPanel1.Controls.Add(this.buttonRefesh);
             this.flowLayoutPanel1.Controls.Add(this.buttonSet);
-            this.flowLayoutPanel1.Controls.Add(this.buttonClear);
             this.flowLayoutPanel1.Location = new System.Drawing.Point(10, 28);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(297, 29);
@@ -150,26 +164,25 @@ namespace OhwMon
             this.comboBoxPorts.Size = new System.Drawing.Size(118, 21);
             this.comboBoxPorts.TabIndex = 1;
             // 
+            // buttonRefesh
+            // 
+            this.buttonRefesh.Location = new System.Drawing.Point(127, 3);
+            this.buttonRefesh.Name = "buttonRefesh";
+            this.buttonRefesh.Size = new System.Drawing.Size(75, 23);
+            this.buttonRefesh.TabIndex = 2;
+            this.buttonRefesh.Text = "Refresh";
+            this.buttonRefesh.UseVisualStyleBackColor = true;
+            this.buttonRefesh.Click += new System.EventHandler(this.Button_Refresh);
+            // 
             // buttonSet
             // 
-            this.buttonSet.Location = new System.Drawing.Point(127, 3);
+            this.buttonSet.Location = new System.Drawing.Point(208, 3);
             this.buttonSet.Name = "buttonSet";
             this.buttonSet.Size = new System.Drawing.Size(75, 23);
-            this.buttonSet.TabIndex = 2;
+            this.buttonSet.TabIndex = 3;
             this.buttonSet.Text = "Set";
             this.buttonSet.UseVisualStyleBackColor = true;
             this.buttonSet.Click += new System.EventHandler(this.Button_Set);
-            // 
-            // buttonClear
-            // 
-            this.buttonClear.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonClear.Location = new System.Drawing.Point(208, 3);
-            this.buttonClear.Name = "buttonClear";
-            this.buttonClear.Size = new System.Drawing.Size(75, 23);
-            this.buttonClear.TabIndex = 3;
-            this.buttonClear.Text = "Clear";
-            this.buttonClear.UseVisualStyleBackColor = true;
-            this.buttonClear.Click += new System.EventHandler(this.Button_Clear);
             // 
             // tabData
             // 
@@ -211,13 +224,23 @@ namespace OhwMon
             this.statusStrip.Size = new System.Drawing.Size(335, 22);
             this.statusStrip.SizingGrip = false;
             this.statusStrip.TabIndex = 1;
-            this.statusStrip.Text = "statusStrip1";
+            this.statusStrip.Text = "statusStrip";
             // 
             // toolStripStatusLabel
             // 
             this.toolStripStatusLabel.Name = "toolStripStatusLabel";
             this.toolStripStatusLabel.Size = new System.Drawing.Size(57, 17);
             this.toolStripStatusLabel.Text = "Waiting...";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(208, 3);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 3;
+            this.button1.Text = "Set";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.Button_Set);
             // 
             // Main
             // 
@@ -252,10 +275,10 @@ namespace OhwMon
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label labelPortStatus;
-        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.ComboBox comboBoxInterval;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.ComboBox comboBoxPorts;
-        private System.Windows.Forms.Button buttonSet;
+        private System.Windows.Forms.Button buttonRefesh;
         private System.Windows.Forms.Button buttonClear;
         private System.Windows.Forms.TabPage tabLogs;
         private System.Windows.Forms.Timer timerMain;
@@ -263,6 +286,8 @@ namespace OhwMon
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
         private System.Windows.Forms.TabPage tabData;
+        private System.Windows.Forms.Button buttonSet;
+        private System.Windows.Forms.Button button1;
     }
 }
 

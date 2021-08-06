@@ -49,9 +49,13 @@ namespace OhwMon
                 notifyIconMain.Icon = Properties.Resources.outline_assessment_white_32;
             }
 
-            InitializeMonitor();
+            notifyIconMain.Visible = false;
 
+            toolStripStatusLabel.Text = "Getting Ports...";
 
+            GetPorts();
+
+            toolStripStatusLabel.Text = "Getting Ports... Done.";
         }
 
         private string GetSystemTheme()
@@ -81,8 +85,6 @@ namespace OhwMon
                         theme = "None";
                     }
                 }
-                
-
             }
              catch (Exception ex)
             {
@@ -92,12 +94,10 @@ namespace OhwMon
             return theme;
         }
 
-        private void InitializeMonitor()
+        private void GetPorts()
         {
-            
             try
             {
-                notifyIconMain.Visible = false;
                 port.Parity = Parity.None;
                 port.StopBits = StopBits.One;
                 port.DataBits = 8;
@@ -108,11 +108,24 @@ namespace OhwMon
                 {
                     comboBoxPorts.Items.Add(port);
                 }
+                if (comboBoxPorts.Items.Count > 0)
+                {
+                    comboBoxPorts.SelectedIndex = 0;
+                }
                 port.BaudRate = 9600;
             } catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void Button_Refresh(Object sender, EventArgs e)
+        {
+            toolStripStatusLabel.Text = "Refreshing Ports List...";
+            comboBoxPorts.SelectedItem = null;
+            comboBoxPorts.Items.Clear();
+            GetPorts();
+            toolStripStatusLabel.Text = "Refreshing Ports List... Done.";
         }
 
         private void Status()
