@@ -7,22 +7,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using System.Net;
 using System.IO.Ports;
 using OpenHardwareMonitor.Hardware;
 using Microsoft.Win32;
+using System.Net.Sockets;
+using System.IO;
+using System.Collections;
+using System.Threading;
 
 namespace OhwMon
 {
     public partial class Main : Form
     {
 
-        float gpuTemp, cpuTemp;
+        float gpuTemp, cpuTemp, cpuClock, usedRAM, totalRAM, gpuMemUsed, gpuMemTotal;
+        int gpuLoad, cpuLoad, cpuFanSpeed;
+        string cpuName, gpuName, jsonData;
 
-        string currentPort;
+        bool serverStarted = false;
 
-
-        private SerialPort port = new SerialPort();
 
         Computer computer = new Computer()
         {
@@ -34,6 +38,7 @@ namespace OhwMon
             RAMEnabled = true,
         };
 
+        HttpServer server = new HttpServer(2418);
 
         public Main()
         {
@@ -47,22 +52,78 @@ namespace OhwMon
             {
                 notifyIconMain.Icon = Properties.Resources.outline_assessment_black_32;
             }
-             else
+            else
             {
                 notifyIconMain.Icon = Properties.Resources.outline_assessment_white_32;
             }
 
             notifyIconMain.Visible = false;
-            buttonClear.Enabled = false;
-            buttonSetPort.Enabled = false;
 
-            comboBoxInterval.SelectedItem = Properties.Settings.Default.Interval.ToString();
+            // comboBoxInterval.SelectedItem = Properties.Settings.Default.Interval.ToString();
 
-            toolStripStatusLabel.Text = "Getting Ports...";
+            StartTimer();
 
-            GetPorts();
+            UpdateControl();
+        }
 
-            toolStripStatusLabel.Text = "Getting Ports... Done.";
+        private void GetIPAddress()
+        {
+            string ipAddress = "null";
+            string hostName = Dns.GetHostName();
+            var host = Dns.GetHostEntry(hostName);
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    ipAddress = ip.ToString();
+                }
+            }
+            labelIPAddress.Text = ipAddress;
+        }
+
+        private void StartServer()
+        {
+            LogRemote("[INFO]\tStarting Sever...");
+            server.StartHTTPListener();
+            serverStarted = true;
+            toolStripStatusLabel.Text = "Server Started.";
+           
+            UpdateControl();
+            // try starting
+            // LogRemote("[ERROR] Server Started...");
+            // fail: enable button
+            LogRemote("[OK]\tServer Started at port "+ server.ListenerPort +"...");
+            SendData("Hello");
+        }
+
+        private void StopServer()
+        {
+            LogRemote("[INFO]\tStopping Sever...");
+            if (server.StopHTTPListener())
+            {
+            serverStarted = false;
+            toolStripStatusLabel.Text = "Server Stopped.";
+            }
+            
+            UpdateControl();
+        }
+
+        private void SendData(string data)
+        {
+            server.JSONData = data;
+        }
+
+        private void LogRemote(string item)
+        {
+            listBoxRemoteLogs.Items.Insert(0, item);
+        }
+
+        // add separate timer for data
+
+        private void StartTimer()
+        {
+            timerMain.Interval = Properties.Settings.Default.Interval;
+            timerMain.Enabled = true;
         }
 
         private string GetSystemTheme()
@@ -76,215 +137,204 @@ namespace OhwMon
 
                     int themeRegistryValue = (int)Registry.GetValue(registryPath, "SystemUsesLightTheme", null);
 
-                    #pragma warning disable CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
+#pragma warning disable CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
                     if (themeRegistryValue != null)
-                    #pragma warning restore CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
+#pragma warning restore CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
                     {
                         if (themeRegistryValue == 1)
                         {
                             theme = "Light";
-                        } else
+                        }
+                        else
                         {
                             theme = "Dark";
                         }
-                    } else
+                    }
+                    else
                     {
                         theme = "None";
                     }
                 }
             }
-             catch (Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
                 theme = "None";
             }
             return theme;
         }
-        
-        
-        private void GetPorts()
-        {
-            try
-            {
-                port.Parity = Parity.None;
-                port.StopBits = StopBits.One;
-                port.DataBits = 8;
-                port.Handshake = Handshake.None;
-                port.RtsEnable = true;
-                string[] ports = SerialPort.GetPortNames();
-                foreach (string port in ports)
-                {
-                    comboBoxPorts.Items.Add(port);
-                }
-                if (comboBoxPorts.Items.Count > 0)
-                {
-                    comboBoxPorts.SelectedIndex = 0;
-                    currentPort = comboBoxPorts.SelectedItem.ToString();
-                } 
-                else
-                {
-                    currentPort = "";
-                }
-                port.BaudRate = 9600;
 
-                port.ReadTimeout = 500;
-                port.WriteTimeout = 500;
-            } catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+        private void btnClientConnenct_Click(object sender, EventArgs e)
+        {
         }
 
-        private void ComboBoxPorts_SelectedIndexChanged(object sender, EventArgs e)
+        private void Main_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (comboBoxPorts.SelectedIndex >= 0)
-            {
-                if (currentPort != comboBoxPorts.SelectedItem.ToString())
-                {
-                    buttonSetPort.Enabled = true;
-                }
-                
-            }
+            StopServer();
         }
 
-        private void ComboBoxInterval_SelectedIndexChanged(object sender, EventArgs e)
+        private void btnStartServer_Click(object sender, EventArgs e)
         {
-            if (Convert.ToInt32(comboBoxInterval.SelectedItem) != Properties.Settings.Default.Interval)
-            {
-                buttonSetInterval.Enabled = true;
-            } 
-            else
-            {
-                buttonSetInterval.Enabled = false;
-            }
+            StartServer();
         }
 
-        private void Button_SetInterval(object sender, EventArgs e)
+        private void btnStopServer_Click(object sender, EventArgs e)
         {
-            Properties.Settings.Default.Interval = Convert.ToInt32(comboBoxInterval.SelectedItem);
-            Properties.Settings.Default.Save();
-            buttonSetInterval.Enabled = false;
-
-            toolStripStatusLabel.Text = "Restarting...";
-            
-            if (labelPortStatus.Text == "Connected.")
-            {
-                buttonClear.PerformClick();
-                buttonSetPort.PerformClick();
-            }
-            
-            toolStripStatusLabel.Text = "Interval Changed.";
+            StopServer();
         }
 
-        private void Button_Refresh(object sender, EventArgs e)
-        {
-            toolStripStatusLabel.Text = "Refreshing Ports List...";
-            comboBoxPorts.SelectedItem = null;
-            comboBoxPorts.Items.Clear();
-            GetPorts();
-            toolStripStatusLabel.Text = "Refreshing Ports List... Done.";
-        }
-
-
-        private void Button_Set(object sender, EventArgs e)
-        {
-            try
-            {
-                if (!port.IsOpen)
-                {
-                    port.PortName = comboBoxPorts.Text;
-                    port.Open();
-                    timerMain.Interval = Properties.Settings.Default.Interval;
-                    timerMain.Enabled = true;
-                    toolStripStatusLabel.Text = "Sending Data...";
-                    labelPortStatus.Text = "Connected.";
-                    labelPortStatus.BackColor = Color.Green;
-                    buttonSetPort.Enabled = false;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            if (labelPortStatus.Text == "Connected.")
-            {
-                buttonClear.Enabled = true;
-                currentPort = comboBoxPorts.SelectedItem.ToString();
-            }
-        }
-
-        private void Button_Clear(object sender, EventArgs e)
-        {
-            try
-            {
-                port.Write("DIS*");
-                port.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            labelPortStatus.Text = "Disconnected.";
-            labelPortStatus.BackColor = Color.IndianRed;
-            timerMain.Enabled = false;
-            toolStripStatusLabel.Text = "Waiting for device...";
-            buttonClear.Enabled = false;
-            buttonSetPort.Enabled = true;
-        }
-
-        private void Status()
+        private void GetStatus()
         {
             foreach (var hardware in computer.Hardware)
             {
-                if (hardware.HardwareType == HardwareType.GpuNvidia)
+                hardware.Update();
+                if (hardware.HardwareType == HardwareType.GpuNvidia || hardware.HardwareType == HardwareType.GpuAti)
                 {
-                    hardware.Update();
+                    gpuName = hardware.Name;
                     foreach (var sensor in hardware.Sensors)
                     {
-                        if (sensor.SensorType == SensorType.Temperature)
+                        if (sensor.SensorType == SensorType.Temperature && sensor.Name.Contains("GPU Core"))
                         {
                             gpuTemp = sensor.Value.GetValueOrDefault();
                         }
+                        if (sensor.SensorType == SensorType.Load && sensor.Name.Contains("GPU Core"))
+                        {
+                            gpuLoad = (int)sensor.Value.GetValueOrDefault();
+                        }
+                        if (sensor.Name.Contains("GPU Memory Used"))
+                        {
+                            gpuMemUsed = sensor.Value.GetValueOrDefault() / 1000;
+                        }
+                        if (sensor.Name.Contains("GPU Memory Total"))
+                        {
+                            gpuMemTotal = sensor.Value.GetValueOrDefault() / 1000;
+                        }
+
                     }
                 }
                 if (hardware.HardwareType == HardwareType.CPU)
                 {
-                    hardware.Update();
+                    cpuName = hardware.Name;
                     foreach (var sensor in hardware.Sensors)
-                        if (sensor.SensorType == SensorType.Temperature)
+                    {
+                        if (sensor.SensorType == SensorType.Temperature && sensor.Name.Contains("CPU Package"))
                         {
                             cpuTemp = sensor.Value.GetValueOrDefault();
 
                         }
+                        if (sensor.SensorType == SensorType.Load && sensor.Name.Contains("CPU Total"))
+                        {
+                            cpuLoad = (int)sensor.Value.GetValueOrDefault();
+                        }
+                        if (sensor.SensorType == SensorType.Clock && sensor.Name.Contains("CPU Core #1"))
+                        {
+                            cpuClock = (float)(sensor.Value.GetValueOrDefault() / 1000);
+                        }
+                    }
 
                 }
+
+                if (hardware.HardwareType == HardwareType.RAM)
+                {
+                    foreach (var sensor in hardware.Sensors)
+                    {
+                        if (sensor.Name.Contains("Used Memory"))
+                        {
+                            usedRAM = sensor.Value.GetValueOrDefault();
+                        }
+                        if (sensor.Name.Contains("Available Memory"))
+                        {
+                            totalRAM = usedRAM + sensor.Value.GetValueOrDefault();
+                        }
+                    }
+
+                }
+                if (hardware.HardwareType == HardwareType.Mainboard)
+                {
+                    foreach (var subhardware in hardware.SubHardware)
+                    {
+                        subhardware.Update();
+                        foreach (var sensor in subhardware.Sensors)
+                        {
+                            if (sensor.Name.Equals("Fan #1"))
+                            {
+                                cpuFanSpeed = (int)sensor.Value.GetValueOrDefault();
+                            }
+                        }
+                    }
+                }
+            }
+            labelCPUName.Text = cpuName;
+            labelCPUTemp.Text = cpuTemp + "°C";
+            labelCPULoad.Text = cpuLoad + "%";
+            labelCPUFanSpeed.Text = cpuFanSpeed + " RPM";
+            labelCPUClock.Text = cpuClock.ToString("F") + " GHz";
+
+            labelGPUName.Text = gpuName;
+            labelGPUTemp.Text = gpuTemp + "°C";
+            labelGPULoad.Text = gpuLoad + "%";
+            labelGPUMemory.Text = gpuMemUsed.ToString("0.0") + " GB of " + gpuMemTotal.ToString("0.0") + " GB";
+            labelRAMUsage.Text = usedRAM.ToString("0.0") + " GB of " + totalRAM.ToString("0.0") + " GB";
+            /*   Trasmission data codes.   
+             * 
+             *  *   Start of Data
+             *  ~cn CPU Name
+             *  ~ct CPU Temp
+             *  ~cl CPU Load
+             *  ~gn GPU Name
+             *  ~gt GPU Temp
+             *  ~gu GPU Mem. Used
+             *  ~go GPU Mem. Total
+             *  ~ru RAM Usage
+             *  ~rt RAM Total
+             *  #   End of Data
+             *
+             */
+            if (gpuName.Contains("NVIDIA"))
+            {
+                gpuName = gpuName.Replace("NVIDIA", "").Trim();
+            }
+            // make object
+            jsonData = "{";
+            jsonData += "\"cn\":\"" + cpuName + "\",\"ct\":" + cpuTemp + ",\"cl\":" + cpuLoad + ",\"gn\":\""
+                + gpuName + "\",\"gt\":" + gpuTemp + ",\"gl\":" + gpuLoad + ",\"gu\":" + gpuMemUsed + ",\"go\":"
+                + gpuMemTotal + ",\"ru\":" + usedRAM + ",\"rt\":" + totalRAM + ",\"cc\":" + cpuClock.ToString("F") + ",\"cf\":" + cpuFanSpeed;
+            jsonData += "}";
+        }
+
+        private void TimerMain_Tick(object sender, EventArgs e)
+        {
+            GetStatus();
+            if (serverStarted)
+            {
+                SendData(jsonData);
             }
 
-            try
+            GetIPAddress();
+
+        }
+
+        private void UpdateControl()
+        {
+
+            if (serverStarted)
             {
-                port.Write(gpuTemp + "*" + cpuTemp + "#");
-                System.Console.WriteLine(gpuTemp + "*" + cpuTemp + "#");
+                btnServerStart.Enabled = false;
+                btnServerStop.Enabled = true;
+                lblServerStatus.Text = "Running.";
             }
-            catch (Exception ex)
+            else
             {
-                timerMain.Stop();
-                MessageBox.Show(ex.Message);
-                labelPortStatus.Text = "Disconnected";
-                labelPortStatus.BackColor = Color.IndianRed;
-                buttonClear.Enabled = false;
-                buttonRefesh.PerformClick();
-                toolStripStatusLabel.Text = "Device disconnected or not responding...";
+                btnServerStart.Enabled = true;
+                btnServerStop.Enabled = false;
+                lblServerStatus.Text = "Stopped.";
             }
+
         }
 
         private void Main_Load(object sender, EventArgs e)
         {
             computer.Open();
-        }
-
-        private void TimerMain_Tick(object sender, EventArgs e)
-        {
-            Status();
         }
 
         private void MainWindow_Resize(object sender, EventArgs e)
@@ -311,5 +361,6 @@ namespace OhwMon
             this.WindowState = FormWindowState.Normal;
             notifyIconMain.Visible = false;
         }
+
     }
 }
