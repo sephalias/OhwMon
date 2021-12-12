@@ -51,6 +51,8 @@ namespace OhwMon
             this.tabData = new System.Windows.Forms.TabPage();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.labelCPUClock = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.labelCPUFanSpeed = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.labelCPULoad = new System.Windows.Forms.Label();
@@ -71,11 +73,6 @@ namespace OhwMon
             this.labelGPUTemp = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.tabSocketClient = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.listBoxClientLog = new System.Windows.Forms.ListBox();
-            this.btnClientConnenct = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.labelCPUClock = new System.Windows.Forms.Label();
             this.statusStrip.SuspendLayout();
             this.tabWireless.SuspendLayout();
             this.tabData.SuspendLayout();
@@ -83,7 +80,6 @@ namespace OhwMon
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tabSocketClient.SuspendLayout();
-            this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
             // timerMain
@@ -282,6 +278,24 @@ namespace OhwMon
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "CPU";
             // 
+            // labelCPUClock
+            // 
+            this.labelCPUClock.AutoSize = true;
+            this.labelCPUClock.Location = new System.Drawing.Point(235, 33);
+            this.labelCPUClock.Name = "labelCPUClock";
+            this.labelCPUClock.Size = new System.Drawing.Size(78, 13);
+            this.labelCPUClock.TabIndex = 9;
+            this.labelCPUClock.Text = "labelCPUClock";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(192, 33);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(37, 13);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "Clock:";
+            // 
             // labelCPUFanSpeed
             // 
             this.labelCPUFanSpeed.AutoSize = true;
@@ -467,61 +481,12 @@ namespace OhwMon
             // 
             this.tabSocketClient.Controls.Add(this.tabData);
             this.tabSocketClient.Controls.Add(this.tabWireless);
-            this.tabSocketClient.Controls.Add(this.tabPage1);
             this.tabSocketClient.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabSocketClient.Location = new System.Drawing.Point(0, 0);
             this.tabSocketClient.Name = "tabSocketClient";
             this.tabSocketClient.SelectedIndex = 0;
             this.tabSocketClient.Size = new System.Drawing.Size(335, 305);
             this.tabSocketClient.TabIndex = 0;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Controls.Add(this.listBoxClientLog);
-            this.tabPage1.Controls.Add(this.btnClientConnenct);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(327, 279);
-            this.tabPage1.TabIndex = 4;
-            this.tabPage1.Text = "tabPage1";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // listBoxClientLog
-            // 
-            this.listBoxClientLog.FormattingEnabled = true;
-            this.listBoxClientLog.Location = new System.Drawing.Point(7, 50);
-            this.listBoxClientLog.Name = "listBoxClientLog";
-            this.listBoxClientLog.Size = new System.Drawing.Size(312, 199);
-            this.listBoxClientLog.TabIndex = 1;
-            // 
-            // btnClientConnenct
-            // 
-            this.btnClientConnenct.Location = new System.Drawing.Point(246, 21);
-            this.btnClientConnenct.Name = "btnClientConnenct";
-            this.btnClientConnenct.Size = new System.Drawing.Size(75, 23);
-            this.btnClientConnenct.TabIndex = 0;
-            this.btnClientConnenct.Text = "Connect";
-            this.btnClientConnenct.UseVisualStyleBackColor = true;
-            this.btnClientConnenct.Click += new System.EventHandler(this.btnClientConnenct_Click);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(192, 33);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(37, 13);
-            this.label1.TabIndex = 8;
-            this.label1.Text = "Clock:";
-            // 
-            // labelCPUClock
-            // 
-            this.labelCPUClock.AutoSize = true;
-            this.labelCPUClock.Location = new System.Drawing.Point(235, 33);
-            this.labelCPUClock.Name = "labelCPUClock";
-            this.labelCPUClock.Size = new System.Drawing.Size(78, 13);
-            this.labelCPUClock.TabIndex = 9;
-            this.labelCPUClock.Text = "labelCPUClock";
             // 
             // Main
             // 
@@ -548,7 +513,6 @@ namespace OhwMon
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.tabSocketClient.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -595,9 +559,6 @@ namespace OhwMon
         private System.Windows.Forms.Label labelGPUTemp;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.TabControl tabSocketClient;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.ListBox listBoxClientLog;
-        private System.Windows.Forms.Button btnClientConnenct;
         private System.Windows.Forms.Label labelCPUClock;
         private System.Windows.Forms.Label label1;
     }

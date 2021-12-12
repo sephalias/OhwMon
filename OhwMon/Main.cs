@@ -25,7 +25,8 @@ namespace OhwMon
         int gpuLoad, cpuLoad, cpuFanSpeed;
         string cpuName, gpuName, jsonData;
 
-        bool serverStarted = false;
+        bool serverStarted = true;
+
 
 
         Computer computer = new Computer()
@@ -64,6 +65,9 @@ namespace OhwMon
             StartTimer();
 
             UpdateControl();
+
+
+            StartServer();
         }
 
         private void GetIPAddress()

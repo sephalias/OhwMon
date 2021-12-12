@@ -8,7 +8,7 @@ namespace OhwMon
 {
     public class HttpServer
     {
-        private HttpListener listener;
+        private readonly HttpListener listener;
         private int listenerPort;
         private string jsonData;
         private Thread listenerThread;
@@ -18,8 +18,10 @@ namespace OhwMon
             listenerPort = port;
             try
             {
-                listener = new HttpListener();
-                listener.IgnoreWriteExceptions = true;
+                listener = new HttpListener
+                {
+                    IgnoreWriteExceptions = true
+                };
             }
             catch (PlatformNotSupportedException)
             {
